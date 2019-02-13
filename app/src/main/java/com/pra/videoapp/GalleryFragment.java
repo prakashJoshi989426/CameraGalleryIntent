@@ -2,6 +2,7 @@ package com.pra.videoapp;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,8 +18,12 @@ import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RadioButton;
+
 import com.pra.videoapp.interFace.PermissionAllGranted;
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -26,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -37,7 +43,7 @@ public class GalleryFragment extends Fragment implements PermissionAllGranted {
 
     RadioButton mRbMale, mRbFemale;
     private String imageFilePath;
-    private CircleImageView mCircleImageView;
+    private CircleImageView mCircleImageView, mDynamicImage;
     final private int REQUEST_CAPTURE_IMAGE = 0;
     final private int REQUEST_GALLERY = 1;
 
@@ -53,14 +59,29 @@ public class GalleryFragment extends Fragment implements PermissionAllGranted {
     }
 
     private void initComponents(View mView) {
-        mCircleImageView = (CircleImageView) mView.findViewById(R.id.profile_image);
-
+        mCircleImageView =  mView.findViewById(R.id.profile_image);
+        mDynamicImage = mView.findViewById(R.id.dynamic_image);
 
         mRbMale = mView.findViewById(R.id.rb_male);
         mRbFemale = mView.findViewById(R.id.rb_female);
         mRbMale.setChecked(true);
         mRbMale.setClickable(true);
         mRbFemale.setClickable(false);
+
+
+        setImageFromUrlForProfilepic(getActivity(),mDynamicImage,"https://randomuser.me/api/portraits/women/73.jpg");
+    }
+
+
+    public static void setImageFromUrlForProfilepic(Context context, CircleImageView imageView, String url) {
+        if (url.length() == 0) {
+            url = "temp";
+        }
+        Picasso.get().
+                load(url).
+                placeholder(R.drawable.ic_default_user).
+                error(R.drawable.ic_default_user).
+                into(imageView);
     }
 
 
@@ -103,13 +124,14 @@ public class GalleryFragment extends Fragment implements PermissionAllGranted {
     }
 
     File mFileUPload;
+
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
 
         switch (requestCode) {
             case REQUEST_CAPTURE_IMAGE:
                 if (resultCode == RESULT_OK) {
                     if (imageReturnedIntent == null || imageReturnedIntent.getData() == null) {
-                        mFileUPload = new File(getPath(Uri.parse(imageFilePath)));
+                        mFileUPload = new File(imageFilePath);
                         mCircleImageView.setImageURI(Uri.parse(imageFilePath));
                     } else {
                         mFileUPload = new File(getPath(imageReturnedIntent.getData()));
@@ -128,15 +150,13 @@ public class GalleryFragment extends Fragment implements PermissionAllGranted {
     }
 
 
-
-    public String getPath(Uri uri)
-    {
-        String[] projection = { MediaStore.Images.Media.DATA };
+    public String getPath(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
         if (cursor == null) return null;
-        int column_index =             cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
-        String s=cursor.getString(column_index);
+        String s = cursor.getString(column_index);
         cursor.close();
         return s;
     }

@@ -12,6 +12,16 @@
         android:layout_marginTop="20dp"
         android:src="@drawable/ic_account_circle_black" />
 
+
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/dynamic_image"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/profile_image"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_account_circle_black" />
+
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -32,6 +32,10 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'com.karumi:dexter:5.0.0'
+    // picasso image loading
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+
 
 
     // retrofit
